@@ -1,12 +1,11 @@
 package com.nogoon.samples.concurrency.raw;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-public class SpringThreadPoolTaskExecutorMain {
+public class SpringAsyncThreadPoolTaskExecutorMain {
 
 	/**
 	 * @param args
@@ -15,34 +14,12 @@ public class SpringThreadPoolTaskExecutorMain {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext_Executor_Test.xml");
 		ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor) context.getBean("executorWithPoolSizeRange");
 		
-		Callable<Long> worker = new Callable<Long>() {
-			public Long call() throws Exception {
-				long result = 0L;
-
-				System.out.println("working...");
-				while (true) {
-					if (Thread.currentThread().isInterrupted()) {
-						System.out.println("canceled...!");
-						//Thread.currentThread().interrupt();
-						break;
-					}
-					// Thread.sleep(1000); // simulates work
-					result++;
-					System.out.println("step " + result + "...");
-
-					if (result == Long.MAX_VALUE) {
-						break;
-					}
-				}
-
-				return result;
-			}
-		};
+		Worker worker = (Worker) context.getBean("testWorker");
 		
-		int startCount = executor.getActiveCount();		
+		int startCount = executor.getActiveCount();
 		
-		Future<Long> submit1 = executor.submit(worker);
-		Future<Long> submit2 = executor.submit(worker);
+		Future<Long> submit1 = worker.work();
+		Future<Long> submit2 = worker.work();
 		
 		try {
 			Thread.sleep(500);
