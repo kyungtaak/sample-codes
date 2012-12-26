@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+    xmlns:task="http://www.springframework.org/schema/task" 
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+        
+    
+    <bean id="cf" class="org.springframework.amqp.rabbit.connection.CachingConnectionFactory">
+    </bean>
+
+    <rabbit:queue id="nogoon-queue" durable="true" auto-delete="false" exclusive="false" name="silly-wabbit-queue"/>
+
+    <rabbit:direct-exchange name="nogoon-exchange" durable="true" auto-delete="false" id="nogoon-exchange">
+        <rabbit:bindings>
+            <rabbit:binding queue="nogoon-queue" key="nogoon-key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <bean id="template" class="org.springframework.amqp.rabbit.core.RabbitTemplate">
+        <property name="connectionFactory" ref="cf"/>
+        <property name="exchange" value="nogoon-exchange"/>
+        <property name="queue" value="nogoon-queue"/>
+        <property name="routingKey" value="nogoon-key"/>
+    </bean>    
+    
+</beans>
