@@ -24,6 +24,18 @@ public class HeaderTest {
 		System.out.println(getHeaderMap(test));
 
 	}
+	
+	@Test
+	public void stringBuilderTest() {
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("abc");
+		Assert.assertEquals(3, builder.length());
+
+		builder.delete(0, builder.length());
+		Assert.assertEquals(0, builder.length());
+
+	}
 
 	public Map<String, String> getHeaderMap(String headerString) {
 
@@ -85,16 +97,36 @@ public class HeaderTest {
 		return resultMap;
 
 	}
-
+	
 	@Test
-	public void stringBuilderTest() {
-		StringBuilder builder = new StringBuilder();
-
-		builder.append("abc");
-		Assert.assertEquals(3, builder.length());
-
-		builder.delete(0, builder.length());
-		Assert.assertEquals(0, builder.length());
-
+	public void from() {
+		String test1 = "노희재 <kyungtaak@gmail.com>";
+		String test2 = "kyungtaak@gmail.com";
+		
+		
+		
+		System.out.println(getActorMap(test1));
+		System.out.println(getActorMap(test2));
 	}
+	
+	public Map<String, String> getActorMap(String actorString) {
+		Pattern fromPattern = Pattern.compile("(.*)<(.*)>");
+		
+		Map<String, String> resultMap = new HashMap<String, String>();
+		
+		Matcher matcher = fromPattern.matcher(actorString);
+		
+		if(matcher.matches()) {
+			resultMap.put("ID", matcher.group(1));
+			resultMap.put("NAME", matcher.group(2));
+			System.out.println(matcher.group(1));
+			System.out.println(matcher.group(2));
+		} else {
+			resultMap.put("ID",actorString);
+		}
+		
+		return resultMap;
+	}
+
+	
 }
